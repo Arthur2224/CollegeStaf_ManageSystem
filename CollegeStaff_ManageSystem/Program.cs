@@ -18,7 +18,7 @@ namespace CollegeStaff_ManageSystem
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             DataBaseInitialization.InitializeDataBase();
-            Application.Run(new Form1());
+            Application.Run(new MainMenu());
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CollegeStaff_ManageSystem.dataBase;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -11,15 +12,21 @@ using System.Windows.Forms;
 
 namespace CollegeStaff_ManageSystem
 {
-    public partial class Form1 : Form
+    public partial class MainMenu : Form
     {   Color mainYellowClr=Color.FromArgb(255, 207, 72);
-        public Form1()
+        private string connectionString= @"Data Source=..\..\\Files\\CollegeStaff.db;Version=3;";
+        private string selectedTableName = "teachers";
+        private string selectedTablePKName = "id";
+        private DataBaseQueryProvider queryProvider;
+
+        public MainMenu()
         {
             InitializeComponent();
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            queryProvider = new DataBaseQueryProvider();
              LoadData("teachers");
 
             label1.Text = "Преподаватели колледжа";
@@ -41,12 +48,18 @@ namespace CollegeStaff_ManageSystem
             radioButton2.Text = "Таблицы с предметами";
             radioButton3.Text = "Таблицы с должностями";
 
+            inputFormButton.Location=new Point(dataGridView1.Location.X, dataGridView1.Location.Y+dataGridView1.Size.Height+50);
+            inputFormButton.Text="Ввести";
+
+            deleteDataButton.Location = new Point(inputFormButton.Location.X+inputFormButton.Size.Width, dataGridView1.Location.Y + dataGridView1.Size.Height + 50);
+            deleteDataButton.Text = "Удалить";
+
 
 
         }
         private void LoadData(string tableName)
         {
-            string connectionString = @"Data Source=..\..\\Files\\CollegeStaff.db;Version=3;";
+            
             using (SQLiteConnection connection = new SQLiteConnection(connectionString))
             {
                 connection.Open();
@@ -58,6 +71,14 @@ namespace CollegeStaff_ManageSystem
                     dataGridView1.DataSource = dataTable; 
 
                 }
+            }
+        }
+        private void SaveData()
+        {
+            using (SQLiteConnection connection = new SQLiteConnection())
+            {
+                connection.Open();
+
             }
         }
 
@@ -85,16 +106,63 @@ namespace CollegeStaff_ManageSystem
         private void radioButton1_CheckedChanged(object sender, EventArgs e)
         {
             LoadData("teachers");
+            selectedTableName = "teachers";
+            selectedTablePKName = "id";
         }
 
         private void radioButton2_CheckedChanged(object sender, EventArgs e)
         {
             LoadData("subjects");
+            selectedTableName = "subjects";
+            selectedTablePKName = "positionName";
         }
 
         private void radioButton3_CheckedChanged(object sender, EventArgs e)
         {
             LoadData("positions");
+            selectedTableName = "positions";
+            selectedTablePKName= "subjectName";
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            if (dataGridView1.SelectedRows.Count > 0)
+            {
+                string selectedTablePkValue;
+                for (int i = 0; i < dataGridView1.SelectedRows.Count; i++)
+                {
+                    selectedTablePkValue = dataGridView1.SelectedRows[i].Cells[selectedTablePKName].Value.ToString();
+                    queryProvider.DeleteRecord(selectedTableName, selectedTablePKName, selectedTablePkValue);
+                }
+                LoadData(selectedTableName);
+            }
+            else
+            {
+                MessageBox.Show("Не выбрана ни одна строка для удаления.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {   if(radioButton1.Checked)
+            {
+
+
+                Form InputData_teachers = new InputData_teachers();
+                InputData_teachers.Show();
+
+            }
+            else if(radioButton2.Checked)
+            {
+                Form inputSubjectsForm = new Base_InputForm_subjects();
+                inputSubjectsForm.Show();
+            }
+            else if (radioButton3.Checked)
+            {
+               
+                Form inputPositionsForm = new Inherite_InputForm_positions();
+                inputPositionsForm.Show();
+            }
+            
         }
     }
 }
