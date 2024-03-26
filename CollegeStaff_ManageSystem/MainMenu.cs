@@ -16,7 +16,7 @@ namespace CollegeStaff_ManageSystem
     {   Color mainYellowClr=Color.FromArgb(255, 207, 72);
         private string connectionString= @"Data Source=..\..\\Files\\CollegeStaff.db;Version=3;";
         private string selectedTableName = "teachers";
-        private string selectedTablePKName = "id";
+        private string selectedTablePKName = "teacherId";
         private DataBaseQueryProvider queryProvider;
 
         public MainMenu()
@@ -32,7 +32,7 @@ namespace CollegeStaff_ManageSystem
             label1.Text = "Преподаватели колледжа";
             label1.Location=new Point(this.Width/2-label1.Size.Width/2,40);
 
-            panel1.Location = new Point( this.Width/6, this.Height/6);
+            panel1.Location = new Point( this.Width/6, this.Height/5);
             panel1.Size = new Size(this.Width / 2+this.Width/5, this.Height / 2 + this.Height / 5);
             panel1.BackColor =mainYellowClr;
             
@@ -107,21 +107,21 @@ namespace CollegeStaff_ManageSystem
         {
             LoadData("teachers");
             selectedTableName = "teachers";
-            selectedTablePKName = "id";
+            selectedTablePKName = "teacherId";
         }
 
         private void radioButton2_CheckedChanged(object sender, EventArgs e)
         {
             LoadData("subjects");
             selectedTableName = "subjects";
-            selectedTablePKName = "positionName";
+            selectedTablePKName = "subjectId";
         }
 
         private void radioButton3_CheckedChanged(object sender, EventArgs e)
         {
             LoadData("positions");
             selectedTableName = "positions";
-            selectedTablePKName= "subjectName";
+            selectedTablePKName= "positionId";
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -163,6 +163,98 @@ namespace CollegeStaff_ManageSystem
                 inputPositionsForm.Show();
             }
             
+        }
+
+        private void button1_Click_1(object sender, EventArgs e)
+        {
+           dataGridView1.DataSource= queryProvider.GetAverageWorkHours();
+
+        }
+
+        private void button2_Click_1(object sender, EventArgs e)
+        {
+            if (!string.IsNullOrWhiteSpace(textBox1.Text))
+            {
+                dataGridView1.DataSource = queryProvider.GetTeachersByCity(textBox1.Text);
+            }
+            else
+            {
+                MessageBox.Show("Пожалуйста, введите город.");
+            }
+        }
+        private void button3_Click(object sender, EventArgs e)
+        {
+            dataGridView1.DataSource = queryProvider.GetSubjectsForTeachers();
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            if (!string.IsNullOrWhiteSpace(textBox2.Text))
+            {
+                dataGridView1.DataSource = queryProvider.GetTeachersByLastNameInitial(textBox2.Text);
+            }
+            else
+            {
+                MessageBox.Show("Пожалуйста, введите инициал фамилии.");
+            }
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            int hourlyRate;
+            if (int.TryParse(maskedTextBox1.Text, out hourlyRate))
+            {
+                dataGridView1.DataSource = queryProvider.GetTeachersByHourlyRate(hourlyRate);
+            }
+            else
+            {
+                MessageBox.Show("Пожалуйста, введите корректную почасовую ставку.");
+            }
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            if (!string.IsNullOrWhiteSpace(textBox3.Text) && !string.IsNullOrWhiteSpace(maskedTextBox3.Text))
+            {
+                dataGridView1.DataSource = queryProvider.QueryWithParameters(textBox3.Text, Convert.ToDecimal(maskedTextBox3.Text));
+            }
+            else
+            {
+                MessageBox.Show("Пожалуйста, заполните все поля.");
+            }
+        }
+
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            dataGridView1.DataSource = queryProvider.FetchLastNamesAndInitials();
+        }
+
+        
+
+        private void radioButton4_CheckedChanged(object sender, EventArgs e)
+        {
+            dataGridView1.DataSource = queryProvider.ChangeCaseOfPositionName("UPPER");
+        }
+
+        private void radioButton5_CheckedChanged(object sender, EventArgs e)
+        {
+            dataGridView1.DataSource = queryProvider.ChangeCaseOfPositionName("LOWER");
+        }
+
+        private void button8_Click(object sender, EventArgs e)
+        {
+            dataGridView1.DataSource = queryProvider.GetMaxHourlyRate();
+        }
+
+        private void button9_Click(object sender, EventArgs e)
+        {
+            dataGridView1.DataSource = queryProvider.GetTotalWorkHours();
+        }
+
+        private void button10_Click(object sender, EventArgs e)
+        {
+            dataGridView1.DataSource = queryProvider.CountSubjectsPerTeacher();
         }
     }
 }

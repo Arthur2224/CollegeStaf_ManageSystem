@@ -26,14 +26,17 @@ namespace CollegeStaff_ManageSystem
         }
         protected override void button1_Click(object sender, EventArgs e)
         {
-            // Сохранение данных в базу данных 
-            string query = $@" INSERT INTO positions (positionName, hourPaid, information) 
-                            VALUES 
-                                ('{textBox1.Text}', {maskedTextBox1.Text}, '{textBox2.Text}');";
+
+  
+            string query = $@"INSERT INTO positions (positionName, hourPaid, information) 
+                VALUES 
+                    ('{textBox1.Text}',{textBox3.Text}, '{textBox2.Text}')";
+
+
             DataBaseQueryProvider queryProvider = new DataBaseQueryProvider();
             queryProvider.AddNewEntity(query);
             textBox1.Text = null; textBox2.Text=null;
-            maskedTextBox1.Text = null;
+            textBox3.Text = null;
         }
     }
 }
